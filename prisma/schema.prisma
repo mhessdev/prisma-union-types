@@ -8,30 +8,38 @@ datasource db {
     relationMode = "prisma"
 }
 
+model Activity {
+    id               Int      @id @default(autoincrement())
+    createdAt        DateTime @default(now())
+    activityableId   Int
+    activityableType String
+    post             Post?    @relation(name: "PostActivities", fields: [activityableId], references: [id], onDelete: Cascade, map: "Post_activityableId_fkey")
+    video            Video?   @relation(name: "VideoActivities", fields: [activityableId], references: [id], onDelete: Cascade, map: "Video_activityableId_fkey")
+    photo            Photo?   @relation(name: "PhotoActivities", fields: [activityableId], references: [id], onDelete: Cascade, map: "Photo_activityableId_fkey")
+
+    @@index([activityableId, activityableType])
+}
+
 model Post {
-    id        Int     @id @default(autoincrement())
-    title     String
-    content   String?
-    published Boolean @default(false)
+    id         Int        @id @unique @default(autoincrement())
+    title      String
+    content    String?
+    published  Boolean    @default(false)
+    activities Activity[] @relation("PostActivities")
 }
 
 model Video {
-    id        Int     @id @default(autoincrement())
-    title     String
-    content   String?
-    published Boolean @default(false)
+    id         Int        @id @unique @default(autoincrement())
+    title      String
+    content    String?
+    published  Boolean    @default(false)
+    activities Activity[] @relation("VideoActivities")
 }
 
 model Photo {
-    id        Int     @id @default(autoincrement())
-    title     String
-    content   String?
-    published Boolean @default(false)
-}
-
-model Message {
-    id        Int     @id @default(autoincrement())
-    title     String
-    content   String?
-    published Boolean @default(false)
+    id         Int        @id @unique @default(autoincrement())
+    title      String
+    content    String?
+    published  Boolean    @default(false)
+    activities Activity[] @relation("PhotoActivities")
 }
